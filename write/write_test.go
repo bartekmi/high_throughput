@@ -14,20 +14,27 @@ func TestWrite(t *testing.T) {
 	s := storage.NewDummy()
 	w := New(s)
 
-	// Test
-	k1 := w.Write("Content 1")
-	k2 := w.Write("Content 2")
-
-	// Verify
-	assert.Equal(t, 2, s.Count())
-
-	pair, ok := s.Read(k1)
-	assert.True(t, ok)
+	// First Write
+	k, err := w.Write("Content 1")
+	assert.Equal(t, 1, s.Count())
+	pair, ok, err := s.Read(k)
 	assert.Equal(t, "Content 1", pair.Content)
-
-	pair, ok = s.Read(k2)
 	assert.True(t, ok)
+	assert.Nil(t, err)
+
+	// Second Write
+	k, err = w.Write("Content 2")
+	assert.Equal(t, 2, s.Count())
+	pair, ok, err = s.Read(k)
 	assert.Equal(t, "Content 2", pair.Content)
+	assert.True(t, ok)
+	assert.Nil(t, err)
+
+	// Error Write
+	s.Error = "Simulated Error"
+	k, err = w.Write("Content Error")
+	assert.Equal(t, 2, s.Count())
+	assert.Equal(t, "Error writing content: Simulated Error", err.Error())
 }
 
 func TestGeneratedUniqueID(t *testing.T) {

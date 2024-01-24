@@ -1,6 +1,7 @@
 package write
 
 import (
+	"fmt"
 	"math/rand"
 	"snippetstore/storage"
 	"strings"
@@ -14,10 +15,15 @@ func New(s storage.Storage) *Writer {
 	return &Writer{storage: s}
 }
 
-func (w *Writer) Write(content string) string {
+func (w *Writer) Write(content string) (string, error) {
 	id := generatedUniqueID()
-	w.storage.Write(id, content)
-	return id
+
+	err := w.storage.Write(id, content)
+	if err != nil {
+		return "", fmt.Errorf("Error writing content: %s", err)
+	}
+
+	return id, nil
 }
 
 // We want to accommodate 1T unique id's with a 1:1000

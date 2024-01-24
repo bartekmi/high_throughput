@@ -6,6 +6,6 @@ type KVPair struct {
 }
 
 type Storage interface {
-	Write(guid, content string)
-	Read(guid string) (KVPair, bool)
+	Write(guid, content string) error
+	Read(guid string) (KVPair, bool, error)
 }
