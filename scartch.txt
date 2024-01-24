@@ -1,0 +1,26 @@
+type KVPair struct {
+	Guid    string
+	Content string
+}
+
+type StorageDummy struct {
+	data map[string]string
+}
+
+func NewStorageDummy() *StorageDummy {
+	sd := new(StorageDummy)
+	sd.data = make(map[string]string)
+	return sd
+}
+
+func (sd StorageDummy) Write(guid, content string) {
+	sd.data[guid] = content
+}
+
+func (sd StorageDummy) Read(guid string) (KVPair, bool) {
+	content, ok := sd.data[guid]
+	if ok {
+		return new KVPair{Guid: guid, Content: content}, true
+	}
+	return nil, false
+}
