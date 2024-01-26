@@ -1,4 +1,4 @@
-package write
+package main
 
 import (
 	"fmt"
@@ -15,8 +15,11 @@ func New(s storage.Storage) *Writer {
 	return &Writer{storage: s}
 }
 
+// Writes content and returns an id, guaranteed to be
+// reasonably short and unique
 func (w *Writer) Write(content string) (string, error) {
 	id := generatedUniqueID()
+	// TODO... Check for prior existence!!!
 
 	err := w.storage.Write(id, content)
 	if err != nil {

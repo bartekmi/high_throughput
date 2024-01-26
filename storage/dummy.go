@@ -16,6 +16,7 @@ func (sd *dummy) Write(key, content string) error {
 		return fmt.Errorf(sd.Error)
 	}
 
+	fmt.Printf("Dummy Storage: %s => %s\n", key, content)
 	sd.data[key] = content
 	return nil
 }
@@ -27,8 +28,10 @@ func (sd *dummy) Read(key string) (KVPair, bool, error) {
 
 	content, ok := sd.data[key]
 	if ok {
+		fmt.Printf("Dummy Storage: %s => %s\n", key, content)
 		return KVPair{Guid: key, Content: content}, true, nil
 	}
+	fmt.Printf("Dummy Storage: %s does not exist\n", key)
 	return KVPair{}, false, nil
 }
 
