@@ -1,11 +1,12 @@
 package storage
 
 type KVPair struct {
-	Guid    string
+	ID      string
+	Title   string
 	Content string
 }
 
 type Storage interface {
-	Write(guid, content string) error
+	Write(content KVPair) error
 	Read(guid string) (KVPair, bool, error)
 }

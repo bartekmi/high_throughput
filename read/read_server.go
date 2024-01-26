@@ -39,8 +39,8 @@ func ReturnError(w http.ResponseWriter, message string, err error) {
 
 func main() {
 	s := storage.NewDummy()
-	s.Write("key1", "Content 1")
-	s.Write("key2", "Content 2")
+	s.Write(storage.KVPair{ID: "key1", Content: "Content 1"})
+	s.Write(storage.KVPair{ID: "key2", Content: "Content 2", Title: "Title 2"})
 
 	w := New(s)
 	address := ":8080"

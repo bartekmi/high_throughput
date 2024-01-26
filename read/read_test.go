@@ -10,8 +10,8 @@ import (
 func TestRead(t *testing.T) {
 	// Set up
 	s := storage.NewDummy()
-	s.Write("k1", "Content 1")
-	s.Write("k2", "Content 2")
+	s.Write(storage.KVPair{ID: "k1", Content: "Content 1"})
+	s.Write(storage.KVPair{ID: "k2", Content: "Content 2", Title: "Title 2"})
 	r := New(s)
 
 	// Read k1

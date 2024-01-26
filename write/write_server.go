@@ -19,6 +19,13 @@ type WritePayload struct {
 	Content string `json:"content"`
 }
 
+func (w WritePayload) toKVPair() storage.KVPair {
+	return storage.KVPair{
+		Title:   w.Title,
+		Content: w.Content,
+	}
+}
+
 type WriteResponse struct {
 	URL string `json:"url"`
 }
@@ -45,7 +52,7 @@ func handleWrite(w *Writer, rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ID, err := w.Write(payload.Content)
+	ID, err := w.Write(payload.toKVPair())
 	if err != nil {
 		ReturnError(rw, "Error storing content", err)
 		return

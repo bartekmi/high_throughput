@@ -16,12 +16,14 @@ func New(s storage.Storage) *Writer {
 }
 
 // Writes content and returns an id, guaranteed to be
-// reasonably short and unique
-func (w *Writer) Write(content string) (string, error) {
+// reasonably short and unique.
+// data.ID is ignored.
+func (w *Writer) Write(data storage.KVPair) (string, error) {
 	id := generatedUniqueID()
+	data.ID = id
 	// TODO... Check for prior existence!!!
 
-	err := w.storage.Write(id, content)
+	err := w.storage.Write(data)
 	if err != nil {
 		return "", fmt.Errorf("Error writing content: %s", err)
 	}
