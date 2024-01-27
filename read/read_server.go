@@ -38,12 +38,15 @@ func ReturnError(w http.ResponseWriter, message string, err error) {
 }
 
 func main() {
-	s := storage.NewDummy()
-	s.Write(storage.KVPair{ID: "key1", Content: "Content 1"})
-	s.Write(storage.KVPair{ID: "key2", Content: "Content 2", Title: "Title 2"})
+	// Used for testing
+	// s := storage.NewDummy()
+	// s.Write(storage.KVPair{ID: "key1", Content: "Content 1"})
+	// s.Write(storage.KVPair{ID: "key2", Content: "Content 2", Title: "Title 2"})
+
+	s := storage.NewDynamoDB(storage.DYNAMODB_TABLE_PROD)
 
 	w := New(s)
-	address := ":8080"
+	address := ":8081"
 
 	handler := func(rw http.ResponseWriter, r *http.Request) {
 		handleWrite(w, rw, r)

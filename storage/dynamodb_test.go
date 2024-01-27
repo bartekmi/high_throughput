@@ -23,7 +23,7 @@ func MyFunc() {
 
 func TestReadWrite(t *testing.T) {
 	// Set up
-	dd := NewDynamoDB("high_throughput_test.snippets")
+	dd := NewDynamoDB(DYNAMODB_TABLE_TEST)
 	require.Nil(t, dd.deleteAll())
 
 	// First Write
@@ -51,7 +51,7 @@ func TestReadWrite(t *testing.T) {
 }
 
 func TestReadMissingID(t *testing.T) {
-	dd := NewDynamoDB("high_throughput_test.snippets")
+	dd := NewDynamoDB(DYNAMODB_TABLE_TEST)
 
 	_, ok, err := dd.Read("DOES NOT EXIST")
 	require.Nil(t, err)

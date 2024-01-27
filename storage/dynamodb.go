@@ -15,6 +15,8 @@ import (
 )
 
 const PARTITION_KEY = "ID"
+const DYNAMODB_TABLE_PROD = "high_throughput.snippets"
+const DYNAMODB_TABLE_TEST = "high_throughput_test.snippets"
 
 type dynamoDB struct {
 	client    *dynamodb.Client

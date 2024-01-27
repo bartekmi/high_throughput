@@ -75,7 +75,7 @@ func ReturnError(w http.ResponseWriter, message string, err error) {
 }
 
 func main() {
-	s := storage.NewDummy()
+	s := storage.NewDynamoDB(storage.DYNAMODB_TABLE_PROD)
 	w := New(s)
 	address := ":8080"
 
