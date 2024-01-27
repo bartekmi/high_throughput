@@ -21,17 +21,17 @@ func (sd *dummy) Write(data KVPair) error {
 	return nil
 }
 
-func (sd *dummy) Read(key string) (KVPair, bool, error) {
+func (sd *dummy) Read(id string) (KVPair, bool, error) {
 	if sd.Error != "" {
 		return KVPair{}, false, fmt.Errorf(sd.Error)
 	}
 
-	content, ok := sd.data[key]
+	content, ok := sd.data[id]
 	if ok {
-		fmt.Printf("Dummy Storage: %s => %s\n", key, content)
+		fmt.Printf("Dummy Storage: %s => %s\n", id, content)
 		return content, true, nil
 	}
-	fmt.Printf("Dummy Storage: %s does not exist\n", key)
+	fmt.Printf("Dummy Storage: %s does not exist\n", id)
 	return KVPair{}, false, nil
 }
 
