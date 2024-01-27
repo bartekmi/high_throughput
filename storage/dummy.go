@@ -35,6 +35,6 @@ func (sd *dummy) Read(id string) (KVPair, bool, error) {
 	return KVPair{}, false, nil
 }
 
-func (sd *dummy) Count() int {
-	return len(sd.data)
+func (sd *dummy) Count() (int, error) {
+	return len(sd.data), nil
 }

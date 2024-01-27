@@ -14,6 +14,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
+const PARTITION_KEY = "ID"
+
 type dynamoDB struct {
 	client    *dynamodb.Client
 	tableName string
@@ -39,7 +41,7 @@ func NewDynamoDB(tableName string) *dynamoDB {
 func (d *dynamoDB) Write(data KVPair) error {
 	item, err := attributevalue.MarshalMap(data)
 	if err != nil {
-		return err
+		return unwrapError(err)
 	}
 	_, err = d.client.PutItem(context.TODO(), &dynamodb.PutItemInput{
 		TableName: aws.String(d.tableName), Item: item,
@@ -47,13 +49,13 @@ func (d *dynamoDB) Write(data KVPair) error {
 	if err != nil {
 		log.Printf("Couldn't add item to table. Here's why: %v\n", err)
 	}
-	return err
+	return unwrapError(err)
 }
 
 func (d *dynamoDB) Read(id string) (KVPair, bool, error) {
 	key, err := toKey(id)
 	if err != nil {
-		return KVPair{}, false, err
+		return KVPair{}, false, unwrapError(err)
 	}
 
 	response, err := d.client.GetItem(context.TODO(), &dynamodb.GetItemInput{
@@ -61,7 +63,7 @@ func (d *dynamoDB) Read(id string) (KVPair, bool, error) {
 		TableName: aws.String(d.tableName),
 	})
 	if err != nil {
-		return KVPair{}, false, err
+		return KVPair{}, false, unwrapError(err)
 	}
 	if len(response.Item) == 0 {
 		return KVPair{}, false, nil
@@ -73,19 +75,66 @@ func (d *dynamoDB) Read(id string) (KVPair, bool, error) {
 		log.Printf("Couldn't unmarshal response. Here's why: %v\n", err)
 	}
 
-	return data, true, err
+	return data, true, unwrapError(err)
 }
 
 func toKey(ID string) (map[string]types.AttributeValue, error) {
 	val, err := attributevalue.Marshal(ID)
 	if err != nil {
-		return nil, err
+		return nil, unwrapError(err)
 	}
-	return map[string]types.AttributeValue{"id": val}, nil
+	return map[string]types.AttributeValue{"ID": val}, nil
 }
 
-func (d *dynamoDB) Count() int {
-	return 0
+func (d *dynamoDB) Count() (int, error) {
+	input := &dynamodb.ScanInput{
+		TableName: aws.String(d.tableName),
+		Select:    types.SelectCount,
+	}
+
+	// Perform the Scan operation
+	result, err := d.client.Scan(context.TODO(), input)
+	if err != nil {
+		return 0, unwrapError(err)
+	}
+
+	return int(result.Count), unwrapError(err)
+}
+
+func (d *dynamoDB) deleteAll() error {
+	scanInput := &dynamodb.ScanInput{
+		TableName: aws.String(d.tableName),
+	}
+
+	// Paginate through scan results (if necessary)
+	paginator := dynamodb.NewScanPaginator(d.client, scanInput)
+	for paginator.HasMorePages() {
+		page, err := paginator.NextPage(context.TODO())
+		if err != nil {
+			return fmt.Errorf("Failed to get page: %v", unwrapError(err))
+		}
+
+		for _, item := range page.Items {
+			// Assume primary key attribute is 'id'
+			id := item[PARTITION_KEY].(*types.AttributeValueMemberS).Value
+			key, err := toKey(id)
+			if err != nil {
+				return unwrapError(err)
+			}
+
+			// Delete the item
+			_, err = d.client.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
+				TableName: aws.String(d.tableName),
+				Key:       key,
+			})
+
+			if err != nil {
+				return fmt.Errorf("Failed to delete ID '%s': %v", id, unwrapError(err))
+			}
+		}
+	}
+
+	return nil
 }
 
 func (d *dynamoDB) listTables() ([]string, error) {
@@ -104,6 +153,10 @@ func (d *dynamoDB) listTables() ([]string, error) {
 }
 
 func unwrapError(err error) error {
+	if err == nil {
+		return nil
+	}
+
 	var builder strings.Builder
 	for err != nil {
 		builder.WriteString(err.Error() + "\n")

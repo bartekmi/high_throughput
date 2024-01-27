@@ -16,7 +16,7 @@ func TestWrite(t *testing.T) {
 
 	// First Write
 	k, err := w.Write(storage.KVPair{Content: "Content 1"})
-	assert.Equal(t, 1, s.Count())
+	assert.Equal(t, 1, storage.GetCount(t, s))
 	pair, ok, err := s.Read(k)
 	assert.Equal(t, "Content 1", pair.Content)
 	assert.True(t, ok)
@@ -24,7 +24,7 @@ func TestWrite(t *testing.T) {
 
 	// Second Write
 	k, err = w.Write(storage.KVPair{Content: "Content 2", Title: "Title 2"})
-	assert.Equal(t, 2, s.Count())
+	assert.Equal(t, 2, storage.GetCount(t, s))
 	pair, ok, err = s.Read(k)
 	assert.Equal(t, "Content 2", pair.Content)
 	assert.Equal(t, "Title 2", pair.Title)
@@ -34,7 +34,7 @@ func TestWrite(t *testing.T) {
 	// Error Write
 	s.Error = "Simulated Error"
 	k, err = w.Write(storage.KVPair{Content: "Content Error"})
-	assert.Equal(t, 2, s.Count())
+	assert.Equal(t, 2, storage.GetCount(t, s))
 	assert.Equal(t, "Error writing content: Simulated Error", err.Error())
 }
 
