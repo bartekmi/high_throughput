@@ -14,12 +14,12 @@ func handleWrite(rdr *Reader, rw http.ResponseWriter, r *http.Request) {
 	ID := r.URL.Path[1:]
 	content, ok, err := rdr.Read(ID)
 	if err != nil {
-		ReturnError(rw, "Error reading content", err)
+		ReturnError(rw, "Error reading content", err, http.StatusInternalServerError)
 		return
 	}
 
 	if !ok {
-		ReturnError(rw, fmt.Sprintf("ID '%s' does not exist", ID), err)
+		ReturnError(rw, fmt.Sprintf("ID '%s' does not exist", ID), err, http.StatusNotFound)
 		return
 	}
 
@@ -27,14 +27,14 @@ func handleWrite(rdr *Reader, rw http.ResponseWriter, r *http.Request) {
 	bytes := []byte(content.Content)
 	_, err = rw.Write(bytes)
 	if err != nil {
-		ReturnError(rw, "Error writing response", err)
+		ReturnError(rw, "Error writing response", err, http.StatusInternalServerError)
 		return
 	}
 }
 
-func ReturnError(w http.ResponseWriter, message string, err error) {
+func ReturnError(w http.ResponseWriter, message string, err error, responseCode int) {
 	log.Printf("%s: %v", message, err)
-	http.Error(w, message, http.StatusBadRequest)
+	http.Error(w, message, responseCode)
 }
 
 func main() {
