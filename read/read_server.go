@@ -1,5 +1,5 @@
 // Test with...
-// curl -X POST http://localhost:8080/api/v1/write -H "Content-Type: application/json" -d '{"content":"Save to DB"}'
+// curl http://localhost:8081/<id>
 
 package main
 

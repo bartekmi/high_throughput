@@ -1,0 +1,44 @@
+version: '3'
+services:
+  # Write
+  write:
+    env_file:
+      - .env
+    image: write:local
+    build:
+      context: .
+      dockerfile: Dockerfile.write
+    hostname: write
+    # volumes:
+    #   - ./write:/app
+    ports:
+      - "8080:8080"
+
+  # Read
+  read:
+    env_file:
+      - .env
+    image: read:local
+    build:
+      context: .
+      dockerfile: Dockerfile.read
+    hostname: read
+    # volumes:
+    #   - ./read:/app
+    ports:
+      - "8081:8081"
+
+  # React app
+  # client:
+  #   image: client:local
+  #   build:
+  #     context: ./client
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./client:/app/
+  #     - /app/node_modules
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - back_end
+

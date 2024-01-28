@@ -1,0 +1,7 @@
+# Dockerfile - read
+FROM golang:1.21.6
+
+COPY . /app
+WORKDIR /app/write
+
+CMD ["go", "run", "."]
