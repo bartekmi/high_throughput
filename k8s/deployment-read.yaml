@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ht-deployment-read
+  namespace: ht
+  labels:
+    app: ht-read-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ht-read-app
+  template:
+    metadata:
+      labels:
+        app: ht-read-app
+    spec:
+      containers:
+      - name: read
+        image: 975049909939.dkr.ecr.us-east-2.amazonaws.com/ht:read-latest
+        ports:
+        - name: http
+          containerPort: 8081

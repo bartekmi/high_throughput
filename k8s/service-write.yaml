@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ht-service-write
+  namespace: ht
+  labels:
+    app: ht-write-app
+spec:
+  selector:
+    app: ht-write-app
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ht-deployment-write
+  namespace: ht
+  labels:
+    app: ht-write-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ht-write-app
+  template:
+    metadata:
+      labels:
+        app: ht-write-app
+    spec:
+      containers:
+      - name: write
+        image: 975049909939.dkr.ecr.us-east-2.amazonaws.com/ht:write-latest
+        ports:
+        - name: http
+          containerPort: 8080
