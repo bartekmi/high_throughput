@@ -4,6 +4,7 @@
 package main
 
 import (
+	_ "embed"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -28,6 +29,13 @@ func (w WritePayload) toKVPair() storage.KVPair {
 
 type WriteResponse struct {
 	URL string `json:"url"`
+}
+
+//go:embed home.html
+var homeHtml string
+
+func handleIndex(rw http.ResponseWriter, r *http.Request) {
+	rw.Write([]byte(homeHtml))
 }
 
 func handleWrite(w *Writer, rw http.ResponseWriter, r *http.Request) {
@@ -79,11 +87,12 @@ func main() {
 	w := New(s)
 	address := ":8080"
 
-	handler := func(rw http.ResponseWriter, r *http.Request) {
+	handleApiWrite := func(rw http.ResponseWriter, r *http.Request) {
 		handleWrite(w, rw, r)
 	}
 
-	http.HandleFunc("/api/v1/write", handler)
+	http.HandleFunc("/api/v1/write", handleApiWrite)
+	http.HandleFunc("/", handleIndex)
 	fmt.Println("Write Server Listening on " + address)
 	log.Fatal(http.ListenAndServe(address, nil))
 }

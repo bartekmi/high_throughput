@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Snippet Store</title>
+    <script>
+        function showMessage(message) {
+          var div = document.getElementById('message');
+          div.innerText = message;
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+
+            var title = document.getElementById('inputTitle').value;
+            var content = document.getElementById('inputContent').value;
+            var data = {
+                title: title,
+                content: content
+            };
+
+            fetch('api/v1/write', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                showMessage(`Success! URL = ${data.url}`);
+            })
+            .catch((error) => {
+              console.log(error)
+              showMessage(`Error! ${error}`);
+            });
+        }
+    </script>
+</head>
+<body>
+
+    <form onsubmit="submitForm(event)">
+        <!-- Optional Title Input -->
+        <label for="inputTitle">Title:</label>
+        <input type="text" id="inputTitle" name="title"><br><br>
+
+        <!-- Mandatory Content Textarea -->
+        <label for="inputContent">Content:</label><br>
+        <textarea id="inputContent" name="content" rows="4" cols="50"></textarea><br><br>
+
+        <button type="submit">Submit</button>
+        <div id="message"></div>
+    </form>
+
+</body>
+</html>
