@@ -32,6 +32,9 @@ deploy: ## Build and deploy application to EKS
 	# Push Images
 	docker push 975049909939.dkr.ecr.us-east-2.amazonaws.com/ht:write-latest
 	docker push 975049909939.dkr.ecr.us-east-2.amazonaws.com/ht:read-latest
+	# Restart the Pods
+	kubectl -n ht rollout restart deployment/ht-deployment-write
+	kubectl -n ht rollout restart deployment/ht-deployment-read
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
