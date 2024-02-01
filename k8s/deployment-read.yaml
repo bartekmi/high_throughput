@@ -18,6 +18,7 @@ spec:
       containers:
       - name: read
         image: 975049909939.dkr.ecr.us-east-2.amazonaws.com/ht:read-latest
+        imagePullPolicy: Always
         ports:
         - name: http
           containerPort: 8081

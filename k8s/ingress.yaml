@@ -19,6 +19,13 @@ spec:
               port:
                 number: 8080
         - path: /
+          pathType: Exact
+          backend:
+            service:
+              name: ht-service-write
+              port:
+                number: 8080
+        - path: /
           pathType: Prefix
           backend:
             service:
